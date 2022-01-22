@@ -1,0 +1,24 @@
+{
+  "name": "skprods/laravel-telegram-sdk",
+  "description": "Telegram Bot SDK for Laravel. Based on the official Telegram Bot API",
+  "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pavel Sklyar",
+      "email": "ozpavel@yandex.ru"
+    }
+  ],
+  "require": {
+    "php" : "^8.0",
+    "guzzlehttp/guzzle": "^7.0.1",
+    "illuminate/support": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SKprods\\LaravelTelegramSdk\\": "src"
+    }
+  },
+  "minimum-stability": "dev"
+}
