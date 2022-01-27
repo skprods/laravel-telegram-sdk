@@ -48,23 +48,40 @@ abstract class BaseObject implements Arrayable, Jsonable
     /**
      * Get cast value of the property
      *
-     * @param BaseObject $cast  - cast class
-     * @param $value            - property value
+     * @param array|string $cast    - cast class or array of string with cast
+     * @param $value                - property value
      *
      * @return $this[]|$this
      */
-    private function getCastValue(self $cast, $value): array|static
+    private function getCastValue(array|string $cast, $value): array|self
     {
-        if (is_array($value)) {
+        if (is_array($cast)) {
+            /** @var BaseObject $castClass */
+            $castClass = array_pop($cast);
+
             $elements = [];
             foreach ($value as $item) {
-                $elements[] = $cast::make($item);
+                $elements[] = $castClass::make($item);
             }
 
             return $elements;
         }
 
+        /** @var BaseObject $cast */
         return $cast::make($value);
+    }
+
+    public function has(string|array $property): bool
+    {
+        $keys = is_array($property) ? $property : func_get_args();
+
+        foreach ($keys as $value) {
+            if (!array_key_exists($value, $this->properties)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function toArray(): array
@@ -81,6 +98,24 @@ abstract class BaseObject implements Arrayable, Jsonable
 
             if (is_object($value)) {
                 $properties[$property] = (array) $value;
+                continue;
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $item) {
+                    if ($item instanceof self) {
+                        $properties[$property][] = $item->toArray();
+                        continue;
+                    }
+
+                    if (is_object($item)) {
+                        $properties[$property][] = (array) $item;
+                        continue;
+                    }
+
+                    $properties[$property][] = $value;
+                }
+
                 continue;
             }
 

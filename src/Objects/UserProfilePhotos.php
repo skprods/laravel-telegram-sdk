@@ -13,7 +13,7 @@ class UserProfilePhotos extends BaseObject
     protected function casts(): array
     {
         return [
-            'photos' => PhotoSize::class,
+            'photos' => [ PhotoSize::class ],
         ];
     }
 }

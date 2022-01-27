@@ -15,7 +15,7 @@ class VoiceChatParticipantsInvited extends BaseObject
     protected function casts(): array
     {
         return [
-            'users' => User::class,
+            'users' => [ User::class ],
         ];
     }
 }

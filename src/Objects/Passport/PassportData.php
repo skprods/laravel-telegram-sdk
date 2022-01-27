@@ -15,7 +15,7 @@ class PassportData extends BaseObject
     protected function casts(): array
     {
         return [
-            'data' => EncryptedPassportElement::class,
+            'data' => [ EncryptedPassportElement::class ],
             'credentials' => EncryptedCredentials::class,
         ];
     }

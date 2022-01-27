@@ -17,7 +17,7 @@ class Game extends BaseObject
     protected function casts(): array
     {
         return [
-            'photo' => PhotoSize::class,
+            'photo' => [ PhotoSize::class ],
             'text_entities' => MessageEntity::class,
             'animation' => Animation::class,
         ];

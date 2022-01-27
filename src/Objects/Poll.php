@@ -24,8 +24,8 @@ class Poll extends BaseObject
     protected function casts(): array
     {
         return [
-            'options' => PollOption::class,
-            'explanation_entities' => MessageEntity::class,
+            'options' => [ PollOption::class ],
+            'explanation_entities' => [ MessageEntity::class ],
         ];
     }
 }
