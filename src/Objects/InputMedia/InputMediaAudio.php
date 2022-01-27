@@ -2,7 +2,7 @@
 
 namespace SKprods\Telegram\Objects\InputMedia;
 
-use SKprods\Telegram\Objects\InputFile;
+use SKprods\Telegram\Api\InputFile;
 use SKprods\Telegram\Objects\MessageEntity;
 
 /**
@@ -24,7 +24,7 @@ class InputMediaAudio extends InputMedia
     {
         return [
             'thumb' => InputFile::class,
-            'caption_entities' => MessageEntity::class,
+            'caption_entities' => [ MessageEntity::class ],
         ];
     }
 }

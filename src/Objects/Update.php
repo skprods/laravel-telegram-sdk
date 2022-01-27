@@ -2,6 +2,7 @@
 
 namespace SKprods\Telegram\Objects;
 
+use SKprods\Telegram\Objects\Chat\Chat;
 use SKprods\Telegram\Objects\Chat\ChatJoinRequest;
 use SKprods\Telegram\Objects\Chat\ChatMemberUpdated;
 use SKprods\Telegram\Objects\Payments\PreCheckoutQuery;
@@ -46,5 +47,30 @@ class Update extends BaseObject
             'chat_member' => ChatMemberUpdated::class,
             'chat_join_request' => ChatJoinRequest::class,
         ];
+    }
+
+    public function getChat(): ?Chat
+    {
+        return $this->message?->chat
+            ?? $this->editedMessage?->chat
+            ?? $this->channelPost?->chat
+            ?? $this->editedChannelPost?->chat
+            ?? $this->callbackQuery?->message?->chat
+            ?? null;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->message?->from
+            ?? $this->editedMessage?->from
+            ?? $this->channelPost?->from
+            ?? $this->editedChannelPost?->from
+            ?? $this->inlineQuery?->from
+            ?? $this->chosenInlineResult?->user
+            ?? $this->callbackQuery?->from
+            ?? $this->shippingQuery?->user
+            ?? $this->preCheckoutQuery?->user
+            ?? $this->pollAnswer?->user
+            ?? null;
     }
 }

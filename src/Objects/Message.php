@@ -32,7 +32,7 @@ use SKprods\Telegram\Objects\VoiceChat\VoiceChatScheduled;
  * @property string|null $mediaGroupId              Optional. The unique identifier of a media message group this message belongs to
  * @property string|null $authorSignature           Optional. Signature of the post author for messages in channels, or the custom title of an anonymous group administrator
  * @property string|null $text                      Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters
- * @property MessageEntity[]|null $entites          Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
+ * @property MessageEntity[]|null $entities         Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
  * @property Animation|null $animation              Optional. Message is an animation, information about the animation. For backward compatibility, when this field is set, the document field will also be set
  * @property Audio|null $audio                      Optional. Message is an audio file, information about the file
  * @property Document|null $document                Optional. Message is a general file, information about the file
@@ -86,7 +86,7 @@ class Message extends BaseObject
             'forward_from_chat' => Chat::class,
             'reply_to_message' => Message::class,
             'via_bot' => User::class,
-            'entities' => MessageEntity::class,
+            'entities' => [ MessageEntity::class ],
             'animation' => Animation::class,
             'audio' => Audio::class,
             'document' => Document::class,
@@ -94,7 +94,7 @@ class Message extends BaseObject
             'sticker' => Sticker::class,
             'video' => Video::class,
             'video_note' => VideoNote::class,
-            'caption_entities' => MessageEntity::class,
+            'caption_entities' => [ MessageEntity::class ],
             'contact' => Contact::class,
             'dice' => Dice::class,
             'game' => Game::class,
@@ -103,7 +103,7 @@ class Message extends BaseObject
             'location' => Location::class,
             'new_chat_members' => User::class,
             'left_chat_member' => User::class,
-            'new_chat_photo' => PhotoSize::class,
+            'new_chat_photo' => [ PhotoSize::class ],
             'message_auto_delete_timer_changed',
             'pinned_message' => Message::class,
             'invoice' => Invoice::class,

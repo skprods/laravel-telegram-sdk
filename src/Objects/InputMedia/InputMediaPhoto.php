@@ -18,7 +18,7 @@ class InputMediaPhoto extends InputMedia
     protected function casts(): array
     {
         return [
-            'caption_entities' => MessageEntity::class,
+            'caption_entities' => [ MessageEntity::class ],
         ];
     }
 }
