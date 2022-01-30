@@ -3,6 +3,7 @@
 namespace SKprods\Telegram\Exceptions;
 
 use Exception;
+use SKprods\Telegram\Core\Dialog;
 use Throwable;
 
 class TelegramException extends Exception
@@ -28,5 +29,14 @@ class TelegramException extends Exception
     public static function invalidChatAction(array $validActions): self
     {
         return new static("Невалидное состояние чата! Оно должно быть одним из: " . implode(', ', $validActions));
+    }
+
+    public static function invalidDialogStep(Dialog $dialog): self
+    {
+        $class = $dialog::class;
+        $update = $dialog->getUpdate()->toJson();
+        $chatInfo = $dialog->getChatInfo()->toJson();
+
+        return new static("Не удалось определить текущий шаг. Класс: $class\nUpdate: $update\nChatInfo: $chatInfo");
     }
 }

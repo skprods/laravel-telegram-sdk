@@ -2,19 +2,29 @@
 
 namespace SKprods\Telegram;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use SKprods\Telegram\Core\Dialog;
+use SKprods\Telegram\Core\History\ChatInfo;
+use SKprods\Telegram\Core\History\Dialog as HistoryDialog;
+use SKprods\Telegram\Core\Interaction;
 use SKprods\Telegram\Core\Telegram;
 use SKprods\Telegram\Exceptions\TelegramException;
 use SKprods\Telegram\Objects\MessageEntity;
 use SKprods\Telegram\Objects\Update;
+use SKprods\Telegram\Writers\Writer;
+use SKprods\Telegram\Writers\WriterInterface;
 
 class TelegramBotService
 {
     protected Telegram $telegram;
+    protected WriterInterface $writer;
+    protected ?ChatInfo $chatInfo = null;
 
     public function __construct()
     {
         $this->telegram = app(Telegram::class);
+        $this->writer = Writer::getDriverFromConfig();
     }
 
     /**
@@ -64,11 +74,19 @@ class TelegramBotService
         return "ok";
     }
 
+    /**
+     * 1. Если в сообщении есть команда, обрабатывает команду
+     * 2. Если команды нет, проверяет предыдущие вызовы на предмет диалога и то, завершен он или нет
+     * 3. Если это не продолжение диалога, вызывает общий обработчик
+     */
     protected function handleMessage(Update $update): string
     {
         $message = $update->message;
 
+        $this->chatInfo = $this->writer->getChatInfo($update->getChat()->id);
+
         if ($message->entities) {
+            /** Если у сообщения есть массив entities, значит, это команда */
             collect($message->entities)
                 ->filter(function (MessageEntity $entity) {
                     return $entity->type === 'bot_command';
@@ -76,27 +94,64 @@ class TelegramBotService
                 ->each(function (MessageEntity $entity) use ($update) {
                     $this->initCommand($update, $entity);
                 });
-        } else {
-            if ($this->telegram->config->allowDialog) {
-                $this->initDialog();
-            } else {
-                $this->initFreeHandler();
-            }
+
+            return 'ok';
         }
 
+        /** Если включен функционал диалогов и есть активный диалог, инициируем обработку диалога */
+        if ($this->telegram->config->allowDialog && $this->chatInfo->dialog->status === HistoryDialog::ACTIVE_STATUS) {
+            $this->initDialog($update);
+            return 'ok';
+        }
+
+        $this->initFreeHandler();
         return 'ok';
     }
 
-    protected function initCommand(Update $update, MessageEntity $entity)
+    /**
+     * Инициализация команды или диалога, который активируется
+     * по полученной команде
+     *
+     * @throws TelegramException
+     */
+    protected function initCommand(Update $update, MessageEntity $entity): bool
     {
         $name = $this->parseCommand($update->message->text, $entity->offset, $entity->length);
 
-        $commands = $this->telegram->commands;
-        $command = $commands[$name] ?? $commands['help'] ?? null;
+        $commands = array_merge($this->telegram->commands, $this->telegram->dialogs);
+        $aliases = $this->telegram->aliases;
 
-        return ($command) ? $command->make($this->telegram, $update, $entity) : false;
+        $command = $commands[$name] ?? $aliases[$name] ?? $this->getPatternCommand($name) ?? $commands['help'] ?? null;
+
+        if ($command) {
+            $command->make($this->telegram, $update, $this->chatInfo, $entity);
+            return true;
+        }
+
+        return false;
     }
 
+    private function getPatternCommand(string $name): ?Interaction
+    {
+        $name = "/$name";
+
+        $patterns = $this->telegram->patterns;
+        foreach ($patterns as $pattern => $interaction) {
+            preg_match($pattern, $name, $matches);
+
+            if (!empty($matches)) {
+                return $interaction;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Парсинг команды из сообщения
+     *
+     * @throws TelegramException
+     */
     protected function parseCommand($text, $offset, $length): string
     {
         if (trim($text) === '') {
@@ -118,19 +173,29 @@ class TelegramBotService
         return $command;
     }
 
-    protected function initDialog()
+    protected function initDialog(Update $update): bool
     {
-        
+        $chatDialog = $this->chatInfo->dialog;
+
+        /** @var Dialog $dialog */
+        $dialog = $this->telegram->dialogs[$chatDialog->name];
+
+        if ($dialog) {
+            $dialog->make($this->telegram, $update, $this->chatInfo);
+            return true;
+        }
+
+        return false;
     }
 
     protected function initFreeHandler()
     {
-
+        // TODO
     }
 
     protected function handleCallback(Update $update): string
     {
-
+        // TODO
     }
 
     protected function checkAllowed(Update $update): bool
