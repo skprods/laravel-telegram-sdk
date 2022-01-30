@@ -5,12 +5,17 @@ namespace SKprods\Telegram;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
 use Illuminate\Foundation\Application as LaravelApplication;
+use SKprods\Telegram\Writers\WriterManager;
 
 class TelegramServiceProvider extends ServiceProvider
 {
     public function register()
     {
         $this->configure();
+
+        $this->app->singleton('chatInfoWriter', function () {
+            return app(WriterManager::class);
+        });
     }
 
     protected function configure()

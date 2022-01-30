@@ -1,6 +1,6 @@
 <?php
 
-namespace SKprods\Telegram\Entities;
+namespace SKprods\Telegram\Core;
 
 use SKprods\Telegram\Exceptions\TelegramException;
 

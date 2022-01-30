@@ -48,4 +48,30 @@ return [
      * @see SKprods\Telegram\Clients\HttpClientInterface
      */
     'httpClient' => SKprods\Telegram\Clients\SkprodsHttpClient::class,
+
+    /**
+     * Конфигурация ChatInfo
+     *
+     * С помощью этой конфигурации можно настроить, где будет храниться
+     * информация о чатах, такая как текущая и предыдущая команда, а также
+     * информация о диалоге.
+     *
+     * По умолчанию поддерживаются три типа хранения: file, redis, custom.
+     *
+     * - file - хранение данных о чате в JSON-файле. Сам файл будет находиться
+     * в storage/app/chatInfo.json;
+     *
+     * - redis - хранение данных о чате в Redis. В таком случае нужно обязательно
+     * указать ключ connection, в котором указать название соединение. Найти его
+     * можно в config/database.php в секции 'redis';
+     *
+     * - custom - кастомный обработчик хранения. Определите класс-обработчик в
+     * ключе 'handler'. Он должен реализовывать этот интерфейс:
+     * @see SKprods\Telegram\Writers\WriterInterface
+     */
+    'chatInfo' => [
+        'driver' => 'file',
+        'connection' => null,
+        'handler' => null,
+    ],
 ];

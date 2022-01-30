@@ -12,6 +12,7 @@
   ],
   "require": {
     "php" : "^8.0",
+    "ext-redis": "*",
     "guzzlehttp/guzzle": "^7.0.1",
     "illuminate/support": "^8.0"
   },

@@ -3,8 +3,6 @@
 namespace SKprods\Telegram\Core;
 
 use SKprods\Telegram\Api\Api;
-use SKprods\Telegram\Interaction\Command;
-use SKprods\Telegram\Entities\Config;
 use SKprods\Telegram\Methods\Message;
 use SKprods\Telegram\Objects\Update;
 
@@ -28,9 +26,23 @@ class Telegram
 
     /**
      * Зарегистрированные диалоги
-     * @var array
+     * @var Dialog[]
      */
     public array $dialogs;
+
+    /**
+     * Алиасы команд и диалогов
+     */
+    public array $aliases = [];
+
+    /**
+     * Паттерны определения аргументов
+     *
+     * В этом массиве хранятся все паттерны команд и диалогов,
+     * позволяющих выделить из сообщения с командой аргументы.
+     * Хранится в формате pattern => InteractionInstance
+     */
+    public array $patterns = [];
 
     public function __construct(string $botName = null)
     {
@@ -59,11 +71,35 @@ class Telegram
         foreach ($this->config->commands as $className) {
             $command = app($className);
             $this->commands[$command->name] = $command;
+            $this->addAliases($command);
+            $this->addPattern($command);
         }
     }
 
     private function setDialogs()
     {
+        foreach ($this->config->dialogs as $className) {
+            $dialog = app($className);
+            $this->dialogs[$dialog->name] = $dialog;
+            $this->addAliases($dialog);
+            $this->addPattern($dialog);
+        }
+    }
+
+    private function addAliases(Interaction $interaction)
+    {
+        foreach ($interaction->aliases as $alias) {
+            $this->aliases[$alias] = $interaction;
+        }
+    }
+
+    private function addPattern(Interaction $interaction)
+    {
+        $pattern = $interaction->getRegexPattern();
+
+        if ($pattern !== '') {
+            $this->patterns[$pattern] = $interaction;
+        }
     }
 
     public function getWebhookUpdate(): Update
