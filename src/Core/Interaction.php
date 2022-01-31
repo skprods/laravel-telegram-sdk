@@ -189,7 +189,8 @@ abstract class Interaction
         $commandOffsets = $this->allCommandOffsets();
 
         if ($commandOffsets->isEmpty()) {
-            return $this->update->message->text;
+            $message = $this->update->getMessage();
+            return $message->text;
         }
 
         //Extract the current offset for this command and, if it exists, the offset of the NEXT bot_command entity
@@ -221,6 +222,10 @@ abstract class Interaction
     private function allCommandOffsets(): Collection
     {
         $message = $this->update->message;
+        if (!$message) {
+            return collect();
+        }
+
         $entities = collect($message->entities);
 
         if ($entities->contains('type', 'bot_command')) {

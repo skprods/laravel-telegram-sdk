@@ -15,6 +15,7 @@ class Config
         public array $dialogs = [],
         public array $allowedChats = [],
         public array $allowedUsers = [],
+        public FreeHandler|null $freeHandler = null
     ) {
     }
 
@@ -33,7 +34,8 @@ class Config
             $config['commands'] ?? [],
             $config['dialogs'] ?? [],
             $config['allowed_chats'] ?? [],
-            $config['allowed_users'] ?? []
+            $config['allowed_users'] ?? [],
+            $config['freeHandler'] ?? null
         );
     }
 }

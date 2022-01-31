@@ -70,6 +70,13 @@ abstract class Dialog extends Interaction
      * Если текущий шаг не удалось определить, вызовется @throws TelegramException
      * с методом invalidDialogStep.
      *
+     * В диалоге, так же, как в командах, можно обрабатывать ответы из inline-клавиатуры.
+     * В этом случае на моменте обработки обычного шага, например, в методе nameStep()
+     * укажите свойство $stepCompleted в значение false. В этом случае шаг не завершится
+     * и ответ на замыкание придёт в метод nameCallback(). Именование методов с замыканиями
+     * делается аналогично обычным шагам с одним исключением - вместо постфикса Step ставится
+     * постфикс Callback.
+     *
      * Во время обработки вы можете использовать всю необходимую информацию:
      * - свойство @see Telegram $telegram для взаимодействия с API Telegram;
      * - свойство @see Update $update для получения информации о полученном сообщении;
@@ -93,8 +100,12 @@ abstract class Dialog extends Interaction
         }
 
         try {
-            /** Обработка текущего шага диалога */
-            $this->{$currentStep . "Step"}();
+            /** Обработка текущего шага диалога или ответа из inline-клавиатуры на него */
+            if ($this->update->callbackQuery) {
+                $this->{$currentStep . "Callback"}();
+            } else {
+                $this->{$currentStep . "Step"}();
+            }
         } catch (Exception $exception) {
             $this->handleException($exception);
         }

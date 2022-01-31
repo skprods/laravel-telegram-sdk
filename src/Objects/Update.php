@@ -73,4 +73,11 @@ class Update extends BaseObject
             ?? $this->pollAnswer?->user
             ?? null;
     }
+
+    public function getMessage(): ?Message
+    {
+        return $this->message
+            ?? $this->callbackQuery->message
+            ?? null;
+    }
 }

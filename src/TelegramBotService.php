@@ -2,7 +2,6 @@
 
 namespace SKprods\Telegram;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SKprods\Telegram\Core\Dialog;
 use SKprods\Telegram\Core\History\ChatInfo;
@@ -34,25 +33,25 @@ class TelegramBotService
      */
     public function handle(bool $webhook = false): string
     {
-        return $webhook ? $this->handleSingle() : $this->handleMultiple();
+        $updates = $this->getUpdates($webhook);
+
+        foreach ($updates as $update) {
+            $this->handleUpdate($update);
+        }
+
+        return 'ok';
     }
 
-    protected function handleMultiple(): string
+    public function getUpdates(bool $webhook = false): array
     {
-        // array of Update -> handleSingle()
+        return $webhook ? [$this->telegram->getWebhookUpdate()] : $this->telegram->getUpdates();
     }
 
-    protected function handleSingle(Update $update = null): string
+    protected function handleUpdate(Update $update = null): string
     {
-        // вебхук:
-        // 1. получить обновления
-        // 2. проверить на кик
-        // 3. проверить на колбек
-        // 4. проверить на команду
-        // 5. проверить на диалог
-
-        if (!$update) {
-            $update = $this->telegram->getWebhookUpdate();
+        $chatId = $update->getChat()->id;
+        if ($chatId) {
+            $this->chatInfo = $this->writer->getChatInfo($update->getChat()->id);
         }
 
         /**
@@ -83,8 +82,6 @@ class TelegramBotService
     {
         $message = $update->message;
 
-        $this->chatInfo = $this->writer->getChatInfo($update->getChat()->id);
-
         if ($message->entities) {
             /** Если у сообщения есть массив entities, значит, это команда */
             collect($message->entities)
@@ -104,7 +101,23 @@ class TelegramBotService
             return 'ok';
         }
 
-        $this->initFreeHandler();
+        $this->initFreeHandler($update);
+        return 'ok';
+    }
+
+    protected function handleCallback(Update $update): string
+    {
+        $callbackData = $update->callbackQuery->data;
+        [$commandName, $data] = explode('_', $callbackData);
+
+        $commands = array_merge($this->telegram->commands, $this->telegram->dialogs);
+        $neededCommand = $commands[$commandName] ?? null;
+
+        if (!$neededCommand) {
+            return 'ok';
+        }
+
+        $neededCommand->make($this->telegram, $update, $this->chatInfo);
         return 'ok';
     }
 
@@ -131,6 +144,7 @@ class TelegramBotService
         return false;
     }
 
+    /** Получение инстанса команды по паттерну */
     private function getPatternCommand(string $name): ?Interaction
     {
         $name = "/$name";
@@ -188,14 +202,15 @@ class TelegramBotService
         return false;
     }
 
-    protected function initFreeHandler()
+    protected function initFreeHandler(Update $update)
     {
-        // TODO
-    }
+        $handler = $this->telegram->config->freeHandler;
 
-    protected function handleCallback(Update $update): string
-    {
-        // TODO
+        if (!$handler) {
+            return;
+        }
+
+        $handler->make($this->telegram, $update);
     }
 
     protected function checkAllowed(Update $update): bool

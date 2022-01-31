@@ -34,6 +34,12 @@ return [
              * сообщения от ограниченного круга лиц, укажите их ID здесь.
              */
             'allowed_users' => [],
+
+            /**
+             * Обработчик системных уведомлений от Telegram
+             * Он должен наследоваться от @see SKprods\Telegram\Core\FreeHandler
+             */
+            'freeHandler' => null,
         ],
     ],
 

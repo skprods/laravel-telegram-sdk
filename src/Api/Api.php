@@ -21,7 +21,7 @@ class Api
     }
 
     /** @throws ClientException */
-    public function get(string $endpoint, array $params): Response
+    public function get(string $endpoint, array $params = []): Response
     {
         $url = $this->getUrl($endpoint);
         $request = new Request(Request::GET_METHOD, $url, $params);

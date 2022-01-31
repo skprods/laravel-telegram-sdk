@@ -52,7 +52,7 @@ class Response
         );
     }
 
-    public function getResult(): ?array
+    public function getResult(): array|string|int|bool|null
     {
         return $this->body['result'] ?? null;
     }

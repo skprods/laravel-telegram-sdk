@@ -3,12 +3,33 @@
 namespace SKprods\Telegram\Core;
 
 use SKprods\Telegram\Api\Api;
+use SKprods\Telegram\Methods\Chat;
+use SKprods\Telegram\Methods\Commands;
+use SKprods\Telegram\Methods\EditMessage;
+use SKprods\Telegram\Methods\Game;
+use SKprods\Telegram\Methods\Get;
+use SKprods\Telegram\Methods\Location;
 use SKprods\Telegram\Methods\Message;
-use SKprods\Telegram\Objects\Update;
+use SKprods\Telegram\Methods\Passport;
+use SKprods\Telegram\Methods\Payments;
+use SKprods\Telegram\Methods\Query;
+use SKprods\Telegram\Methods\Stickers;
+use SKprods\Telegram\Methods\Update as UpdateMethod;
 
 class Telegram
 {
+    use Chat;
+    use Commands;
+    use EditMessage;
+    use Game;
+    use Get;
+    use Location;
     use Message;
+    use Passport;
+    use Payments;
+    use Query;
+    use Stickers;
+    use UpdateMethod;
 
     /** Версия библиотеки */
     const VERSION = '0.0.0';
@@ -100,12 +121,5 @@ class Telegram
         if ($pattern !== '') {
             $this->patterns[$pattern] = $interaction;
         }
-    }
-
-    public function getWebhookUpdate(): Update
-    {
-        $body = json_decode(file_get_contents('php://input'), true);
-
-        return new Update($body);
     }
 }

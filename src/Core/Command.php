@@ -28,6 +28,9 @@ abstract class Command extends Interaction
      * Она выполняется в методе handle(), который необходимо переопределить в
      * дочерних классах-обработчиках команды.
      *
+     * Если вам нужна обработка ответов из inline-клавиатуры, переопределите
+     * метод handleCallback() и сделайте обработку там.
+     *
      * Во время обработки вы можете использовать всю необходимую информацию:
      * - свойство @see Telegram $telegram для взаимодействия с API Telegram;
      * - свойство @see Update $update для получения информации о полученном сообщении;
@@ -43,9 +46,13 @@ abstract class Command extends Interaction
         /** Метод можно переопределить для выполнения кода до основной обработки */
         $this->beforeHandle();
 
+        /** Обработка команды или ответа из inline-клавиатуры */
         try {
-            /** Обработка команды */
-            $this->handle();
+            if ($this->update->callbackQuery) {
+                $this->handleCallback();
+            } else {
+                $this->handle();
+            }
         } catch (\Exception $exception) {
             $this->handleException($exception);
         }
