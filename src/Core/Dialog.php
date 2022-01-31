@@ -119,7 +119,7 @@ abstract class Dialog extends Interaction
 
     private function checkInitCommand(): bool
     {
-        return (bool) $this->update->message->entities;
+        return (bool) optional($this->update->message)->entities;
     }
 
     /**
