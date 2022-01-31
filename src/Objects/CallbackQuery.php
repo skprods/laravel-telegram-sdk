@@ -22,4 +22,12 @@ class CallbackQuery extends BaseObject
             'message' => Message::class,
         ];
     }
+
+    /** Отделение данных от полученной команды */
+    public function getParsedData(): string
+    {
+        [$commandName, $data] = explode('_', $this->data);
+
+        return $data;
+    }
 }

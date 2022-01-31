@@ -16,8 +16,8 @@ class Command implements Arrayable, Jsonable
     /** Аргументы команды. Присутствуют, когда есть pattern с параметрами */
     public array $arguments = [];
 
-    /** Если в команде используется клавиатура с callback, указывает на страницу */
-    public ?int $page = null;
+    /** Если в команде используется клавиатура с callback, указывает на параметр */
+    public ?int $callbackData = null;
 
     /** Имя класса-обработчика команды с namespace */
     public ?string $className = null;
@@ -28,7 +28,7 @@ class Command implements Arrayable, Jsonable
         $command->name = $data['name'] ?? null;
         $command->pattern = $data['pattern'] ?? null;
         $command->arguments = $data['arguments'] ?? [];
-        $command->page = $data['page'] ?? null;
+        $command->callbackData = $data['callbackData'] ?? null;
         $command->className = $data['className'] ?? null;
 
         return $command;
@@ -40,7 +40,7 @@ class Command implements Arrayable, Jsonable
             'name' => $this->name,
             'pattern' => $this->pattern,
             'arguments' => $this->arguments,
-            'page' => $this->page,
+            'callbackData' => $this->callbackData,
             'className' => $this->className,
         ];
     }
