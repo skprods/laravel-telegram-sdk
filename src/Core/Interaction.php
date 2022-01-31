@@ -262,7 +262,7 @@ abstract class Interaction
 
     protected function prepareChatInfo(ChatInfo $chatInfo): ChatInfo
     {
-        $chatInfo->previousCommand = $chatInfo->currentCommand;
+        $chatInfo->previousCommand = clone $chatInfo->currentCommand;
         $chatInfo->currentCommand->name = $this->name;
         $chatInfo->currentCommand->pattern = $this->pattern;
         $chatInfo->currentCommand->arguments = $this->arguments;
