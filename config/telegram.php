@@ -4,20 +4,35 @@ return [
     'bots' => [
         'default' => [
             /**
-             *
+             * Токен доступа к боту. Его можно получить при регистрации бота
+             * в BotFather
              */
             'token'         => env('TELEGRAM_BOT_TOKEN'),
+
+            /**
+             * Адрес, на который должны будут приходить запросы из Telegram
+             * с помощью webhook
+             */
             'webhook_url'   => env('TELEGRAM_WEBHOOK_URL'),
 
-
+            /**
+             * Встроенный функционал диалога. Подробнее в базовом классе:
+             * @see \SKprods\Telegram\Core\Dialog
+             */
             'allow_dialog'  => true,
 
-
+            /**
+             * Активные команды
+             * Должны наследоваться от @see \SKprods\Telegram\Core\Command
+             */
             'commands'      => [
 
             ],
 
-
+            /**
+             * Активные диалоги
+             * Должны наследоваться от @see \SKprods\Telegram\Core\Dialog
+             */
             'dialogs'       => [
 
             ],
