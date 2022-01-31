@@ -187,10 +187,16 @@ abstract class Dialog extends Interaction
     /** Сохранение информации о текущем шаге в ChatInfo, если stepCompleted = true */
     private function completeStep(string $currentStep)
     {
+        /** Если шаг не завершён, просто сохраняем ChatInfo и выходим */
         if (!$this->stepCompleted) {
+            $this->chatInfo->save();
             return;
         }
 
+        /**
+         * В ином случае проверяем, все ли шаги завершены.
+         * Если да, то помечаем его completed, иначе добавляем прошедший шаг.
+         */
         if (count($this->steps) === count($this->chatInfo->dialog->completedSteps)) {
             $this->chatInfo->dialog->status = HistoryDialog::COMPLETED_STATUS;
         } else {
