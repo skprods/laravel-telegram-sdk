@@ -244,11 +244,13 @@ abstract class Interaction
                 $required->merge($optional)->flip()
             );
 
-        $required->each(function ($field) use ($required, $arguments) {
-            if (!$arguments->has($field)) {
-                $this->handleInvalidArguments($required, $arguments);
-            }
-        });
+        if (!$this->update->callbackQuery) {
+            $required->each(function ($field) use ($required, $arguments) {
+                if (!$arguments->has($field)) {
+                    $this->handleInvalidArguments($required, $arguments);
+                }
+            });
+        }
 
         return $arguments->all();
     }
