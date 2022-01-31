@@ -50,20 +50,20 @@ class WriterManager extends Manager
      */
     public function createRedisDriver(): RedisWriter
     {
-        if (!isset($this->config['connection'])) {
+        if (!isset($this->chatInfoConfig['connection'])) {
             throw ConfigurationException::emptyRedisConnectionName();
         }
 
-        return app(RedisWriter::class, ['connection' => $this->config['connection']]);
+        return app(RedisWriter::class, ['connection' => $this->chatInfoConfig['connection']]);
     }
 
     public function createCustomDriver(): WriterInterface
     {
-        if (!isset($this->config['handler'])) {
+        if (!isset($this->chatInfoConfig['handler'])) {
             throw ConfigurationException::emptyCustomHandler();
         }
 
-        $handler = $this->config['handler'];
+        $handler = $this->chatInfoConfig['handler'];
         return app($handler);
     }
 }
