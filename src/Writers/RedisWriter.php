@@ -33,8 +33,9 @@ class RedisWriter implements WriterInterface
     public function getChatInfo(int $chatId): ChatInfo
     {
         $data = json_decode($this->redis->get($chatId), true);
+        $data = $data ?? ['id' => $chatId];
 
-        return ChatInfo::create($data ?? [], $this);
+        return ChatInfo::create($data, $this);
     }
 
     public function setChatInfo(ChatInfo $chatInfo)
