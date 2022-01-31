@@ -16,9 +16,9 @@ class WriterManager extends Manager
 
     public function __construct(Container $container)
     {
-        $this->chatInfoConfig = config('telegram.chatInfo');
-
         parent::__construct($container);
+
+        $this->chatInfoConfig = $this->config->get('telegram.chatInfo');
     }
 
     public function getDefaultDriver(): string
@@ -28,11 +28,11 @@ class WriterManager extends Manager
 
     public function getDriverFromConfig(): WriterInterface
     {
-        if (empty($this->config)) {
+        if (empty($this->chatInfoConfig)) {
             return $this->createFileDriver();
         }
 
-        return match ($this->config['driver']) {
+        return match ($this->chatInfoConfig['driver']) {
             self::FILE_DRIVER => $this->createFileDriver(),
             self::REDIS_DRIVER => $this->createRedisDriver(),
             self::CUSTOM_DRIVER => $this->createCustomDriver(),
