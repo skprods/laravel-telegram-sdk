@@ -266,7 +266,7 @@ abstract class Interaction
         $chatInfo->currentCommand->name = $this->name;
         $chatInfo->currentCommand->pattern = $this->pattern;
         $chatInfo->currentCommand->arguments = $this->arguments;
-        $chatInfo->currentCommand->callbackData = $this->update->callbackQuery->getParsedData();
+        $chatInfo->currentCommand->callbackData = optional($this->update->callbackQuery)->getParsedData();
         $chatInfo->currentCommand->className = static::class;
 
         if (static::class instanceof Command) {
