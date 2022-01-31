@@ -222,7 +222,11 @@ class TelegramBotService
         }
 
         $chat = $update->getChat();
-        return $chat && $this->checkChatAllow($chat->id);
+        if ($chat->type !== 'private') {
+            return $chat && $this->checkChatAllow($chat->id);
+        } else {
+            return true;
+        }
     }
 
     protected function checkUserAllow(int $chatId): bool
