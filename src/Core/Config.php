@@ -26,6 +26,8 @@ class Config
             throw TelegramException::tokenNotProvided($name);
         }
 
+        $freeHandler = $config['freeHandler'] ? app($config['freeHandler']) : null;
+
         return new self(
             $name,
             $config['token'],
@@ -35,7 +37,7 @@ class Config
             $config['dialogs'] ?? [],
             $config['allowed_chats'] ?? [],
             $config['allowed_users'] ?? [],
-            $config['freeHandler'] ?? null
+            $freeHandler
         );
     }
 }
