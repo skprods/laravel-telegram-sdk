@@ -90,6 +90,9 @@ abstract class Dialog extends Interaction
 
         /** Если диалог вызван командой, отрабатывает обработчик команды */
         if ($this->checkInitCommand()) {
+            /** Очищаем предыдущий диалог */
+            $this->clearChatDialog();
+            /** Выполняем обработку команды-старта */
             $this->handleCommand();
             return;
         }

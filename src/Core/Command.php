@@ -17,6 +17,7 @@ abstract class Command extends Interaction
 
         $this->setArguments();
         $this->chatInfo = $this->prepareChatInfo($chatInfo);
+        $this->clearChatDialog();
 
         $this->run();
     }

@@ -278,6 +278,11 @@ abstract class Interaction
         return $chatInfo;
     }
 
+    protected function clearChatDialog()
+    {
+        $this->chatInfo->dialog = \SKprods\Telegram\Core\History\Dialog::create([]);
+    }
+
     public function getUpdate(): Update
     {
         return $this->update;
