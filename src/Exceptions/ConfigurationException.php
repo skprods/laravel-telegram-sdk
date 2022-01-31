@@ -2,10 +2,7 @@
 
 namespace SKprods\Telegram\Exceptions;
 
-use Exception;
-use Throwable;
-
-class ConfigurationException extends Exception
+class ConfigurationException extends TelegramException
 {
     public static function redisConnection(string $connection): self
     {
