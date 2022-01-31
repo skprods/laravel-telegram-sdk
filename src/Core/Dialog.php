@@ -193,15 +193,14 @@ abstract class Dialog extends Interaction
             return;
         }
 
-        /**
-         * В ином случае проверяем, все ли шаги завершены.
-         * Если да, то помечаем его completed, иначе добавляем прошедший шаг.
-         */
+        /** В ином случае проставляем шаг в завершенный */
+        $this->chatInfo->dialog->completedSteps[] = $currentStep;
+
+        /** И сверяем количество завершенных шагов с описанным для проставления статуса */
         if (count($this->steps) === count($this->chatInfo->dialog->completedSteps)) {
             $this->chatInfo->dialog->status = HistoryDialog::COMPLETED_STATUS;
         } else {
             $this->chatInfo->dialog->status = HistoryDialog::ACTIVE_STATUS;
-            $this->chatInfo->dialog->completedSteps[] = $currentStep;
         }
 
         $this->chatInfo->save();
