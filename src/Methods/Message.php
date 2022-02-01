@@ -381,7 +381,7 @@ trait Message
      *
      * @throws TelegramException|ClientException
      */
-    public function sendChatAction(): bool
+    public function sendChatAction(array $params): bool
     {
         $validActions = [
             'typing',
