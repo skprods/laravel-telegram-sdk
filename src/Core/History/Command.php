@@ -17,7 +17,7 @@ class Command implements Arrayable, Jsonable
     public array $arguments = [];
 
     /** Если в команде используется клавиатура с callback, указывает на параметр */
-    public ?int $callbackData = null;
+    public int|string|null $callbackData = null;
 
     /** Имя класса-обработчика команды с namespace */
     public ?string $className = null;
