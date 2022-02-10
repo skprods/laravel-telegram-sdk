@@ -56,6 +56,9 @@ class Update extends BaseObject
             ?? $this->channelPost?->chat
             ?? $this->editedChannelPost?->chat
             ?? $this->callbackQuery?->message?->chat
+            ?? $this->myChatMember?->chat
+            ?? $this->chatMember?->chat
+            ?? $this->chatJoinRequest?->chat
             ?? null;
     }
 

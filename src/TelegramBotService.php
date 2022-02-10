@@ -49,7 +49,7 @@ class TelegramBotService
 
     protected function handleUpdate(Update $update = null): string
     {
-        $chatId = $update->getChat()->id;
+        $chatId = $update->getChat()?->id;
         if ($chatId) {
             $this->chatInfo = $this->writer->getChatInfo($update->getChat()->id);
         }
@@ -69,6 +69,8 @@ class TelegramBotService
         if ($update->callbackQuery) {
             return $this->handleCallback($update);
         }
+
+        $this->initFreeHandler($update);
 
         return "ok";
     }
@@ -222,7 +224,7 @@ class TelegramBotService
         }
 
         $chat = $update->getChat();
-        if ($chat->type !== 'private') {
+        if ($chat !== null && $chat->type !== 'private') {
             return $chat && $this->checkChatAllow($chat->id);
         } else {
             return true;
