@@ -40,4 +40,24 @@ class Chat extends BaseObject
             'location' => ChatLocation::class,
         ];
     }
+
+    public function isPrivate(): bool
+    {
+        return $this->type === 'private';
+    }
+
+    public function isGroup(): bool
+    {
+        return $this->type === 'group';
+    }
+
+    public function isSupergroup(): bool
+    {
+        return $this->type === 'supergroup';
+    }
+
+    public function isChannel(): bool
+    {
+        return $this->type === 'channel';
+    }
 }
